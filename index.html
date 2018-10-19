@@ -1,0 +1,255 @@
+<!-- <!DOCTYPE html>
+<html>
+  <head>
+    <title>AI Customer Service API</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <link href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+        <script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+        
+  </head>
+  <body>
+    <div class='header' style="height: 10%;background: blue;text-align: center;margin-right: 20px;margin-left: 20px;border-radius:20px;padding: 20px">
+        Welcome to AI Customer Service API
+    </div>
+    <div class="center" style="height: 100%;padding-top: 10px">
+    <div id="content" style="background:whitesmoke;padding-bottom: 10%">
+      <ul></ul>
+
+    </div>
+    
+      <div class=" macro footer" style="background:maroon;width: 50%;">
+        <div class="text text-r" style="float:left" >
+        
+          <input class="mytext" style="border-radius: 5px;align-self: left;height:70%" placeholder="Type a message"/>
+        </div>
+        <div style="float:right;padding-right: 50px">
+          <input type="submit" value="Send" style="width: 100%;align-self: right!important;border-radius: 5px;height: 70%">
+        </div>
+        </div>
+    </div>
+  
+  </body>
+  
+</html> 
+        <script type="text/javascript">
+
+            function formatAMPM(date) {
+                var hours = date.getHours();
+                var minutes = date.getMinutes();
+                var ampm = hours >= 12 ? 'PM' : 'AM';
+                hours = hours % 12;
+                hours = hours ? hours : 12; // the hour '0' should be '12'
+                minutes = minutes < 10 ? '0'+minutes : minutes;
+                var strTime = hours + ':' + minutes + ' ' + ampm;
+                return strTime;
+            }
+
+            function insertChat(who, text, time){
+                if (time === undefined){
+                    time = 0;
+                }
+                var control = "";
+                var date = formatAMPM(new Date());
+                
+                if (who == "user") {
+                    control =   '<li style="width:100%;">' +
+                                    '<div class="msj-rta macro" style="background:blue;margin-right:5%">' +
+                                        '<div class="text text-r">' +
+                                            '<p style="text-align:right;max-width:100%;overflow-wrap: break-word;padding:5px">'+text+'</p>' +
+                                            '<p style="text-align:right;padding:5px"><small>'+date+'</small></p>' +
+                                        '</div>' +
+                                '</li>';              
+                }
+                else if (who == "bot") {
+                    control =  '<li style="width:100%;">' +
+                                    '<div class="msj macro" style="background:green">' +
+                                        '<div class="text text-l">' +
+                                            '<p style"padding:5px">'+ text +'</p>' +
+                                            '<p style="text-align:left;padding:5px"><small>'+date+'</small></p>' +
+                                        '</div>' +
+                                    '</div>' +
+                                '</li>';      
+                }
+                setTimeout (
+                    function() {
+                        $("ul").append(control).scrollTop($("ul").prop('scrollHeight'));
+                    }, time);
+            }
+
+            function resetChat(){
+                $("ul").empty();
+            }
+
+            resetChat();
+            $(".mytext").on("keydown", function(e) {
+                if (e.which == 13) {
+                    const userMessage = $(this).val();
+                    if (userMessage !== "") {
+                        insertChat("user", userMessage);
+                        $(this).val("");
+                    }
+                    response(userMessage);
+                }
+            });
+
+            $('body > div > div > div:nth-child(2) > span').click(function(){
+                $(".mytext").trigger({type: 'keydown', which: 13, keyCode: 13});
+            });
+
+            
+
+            function response(userMessage) {
+                $.ajax({
+                    url : "https://g1b16za560.execute-api.us-east-1.amazonaws.com/dev/chatbot",
+                    type : "POST",
+                    headers: {"x-api-key": ""},
+                    data : JSON.stringify({
+                        "message": userMessage
+                    }),
+                    dataType : "json",
+                    contentType : "application/json",
+                    success : function(data) {
+                        botMessage = data.body;
+                        insertChat("bot", botMessage);
+                    },
+                    error : function(request, error) {
+                        console.log("Request: " + JSON.stringify(request));
+                        console.log("Error: " + JSON.stringify(error));
+                    }
+                });
+            }
+        </script>
+
+   
+</html>
+ -->
+
+ <!DOCTYPE html>
+<html>
+    <head>
+        <title>AI Customer Service</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="style.css">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+        <link href="https://fonts.googleapis.com/css?family=Niramit" rel="stylesheet">
+        <script type="text/javascript" src="lib/axios/dist/axios.standalone.js"></script>
+        <script type="text/javascript" src="lib/CryptoJS/rollups/hmac-sha256.js"></script>
+        <script type="text/javascript" src="lib/CryptoJS/rollups/sha256.js"></script>
+        <script type="text/javascript" src="lib/CryptoJS/components/hmac.js"></script>
+        <script type="text/javascript" src="lib/CryptoJS/components/enc-base64.js"></script>
+        <script type="text/javascript" src="lib/url-template/url-template.js"></script>
+        <script type="text/javascript" src="lib/apiGatewayCore/sigV4Client.js"></script>
+        <script type="text/javascript" src="lib/apiGatewayCore/apiGatewayClient.js"></script>
+        <script type="text/javascript" src="lib/apiGatewayCore/simpleHttpClient.js"></script>
+        <script type="text/javascript" src="lib/apiGatewayCore/utils.js"></script>
+        <script type="text/javascript" src="apigClient.js"></script>
+    </head>
+
+    <body>
+        <div class="header" style="height:10%; text-align:center; margin-right:20px; margin-left:20px; border-radius:20px; padding:20px;">
+            <h1>Welcome to the AI Customer Chatbot</h1>
+        </div>
+        <div class="center" style="height:100%; background:#BDBDBD; margin-top:10px; border-radius:10px;">
+            <div id="content" style="padding-bottom:10%">
+                <ul></ul>
+            </div>
+            <div class=" macro footer" style="width:50%; height:10%;">
+                <div class="text text-r" style="float:left" >
+                    <input id="inputUserMessage" class="userInput" style="width:100%;border-radius:5px; align-self:left; height:80%" placeholder="Type a message"/>
+                </div>
+                <div style="float:right; padding-right:50px">
+                    <input type="button" id="btnSendMessage" class="btn btn-dark" value="Send" style="margin-left:10px;width:100%; align-self:right!important; border-radius:5px; height:80%">
+                </div>
+            </div>
+        </div>
+
+        <script type="text/javascript">
+            function formatAMPM(date) {
+                var hours = date.getHours();
+                var minutes = date.getMinutes();
+                var ampm = hours >= 12 ? 'PM' : 'AM';
+                hours = hours % 12;
+                hours = hours ? hours : 12; // the hour '0' should be '12'
+                minutes = minutes < 10 ? '0' + minutes : minutes;
+                var strTime = hours + ':' + minutes + ' ' + ampm;
+                return strTime;
+            }
+            function insertChat(who, text) {
+                var control = "";
+                var date = formatAMPM(new Date());
+                
+                if (who == "user") {
+                    control =   '<li style="width:100%;">' +
+                                    '<div class="msj-rta macro" style="background:#FAFAFA;margin-right:5%">' +
+                                        '<div class="text text-r">' +
+                                            '<p id=\'userMessageStyle\'>'+text+'</p>' +
+                                            '<p style="text-align:right;padding:5px"><small>'+date+'</small></p>' +
+                                        '</div>' +
+                                '</li>';
+                }
+                else if (who == "bot") {
+                    control =   '<li style="width:100%;">' +
+                                    '<div class="msj macro" style="background:#EEEEEE">' +
+                                        '<div class="text text-l">' +
+                                            '<p id=\'botUserMessage\'>'+ text +'</p>' +
+                                            '<p style="text-align:left;padding:5px"><small>'+date+'</small></p>' +
+                                        '</div>' +
+                                    '</div>' +
+                                '</li>';
+                }
+                $("ul").append(control).scrollTop($("ul").prop('scrollHeight'));
+            }
+            function resetChat() {
+                $("ul").empty();
+            }
+            resetChat();
+            $(".userInput").on("keydown", function(e) {
+                if (e.which == 13) {
+                    const userMessage = $(this).val();
+                    if (userMessage !== "") {
+                        response(userMessage);
+                        $(this).val("");
+                    }
+                }
+            });
+            $('body > div > div > div:nth-child(2) > span').click(function(){
+                $(".userInput").trigger({type: 'keydown', which: 13, keyCode: 13});
+            });
+            document.getElementById("btnSendMessage").onclick = function () {
+                const userMessage = $('#inputUserMessage').val();
+                $('#inputUserMessage').val("");
+                response(userMessage);
+            };
+            function response(userMessage) {
+                userMessage = userMessage.trim();
+                if (userMessage == "clear") {
+                    resetChat();
+                    return;
+                }
+                if (userMessage == "") {
+                    return
+                }
+                insertChat("user", userMessage);
+                var apigClient = apigClientFactory.newClient({
+                    apiKey: "my_api_key"
+                });
+                var params = {};
+                var body = {
+                    "message": userMessage
+                };
+                var additionalParams = {
+                    headers: {}
+                };
+                apigClient.chatbotPost(params, body, additionalParams)
+                    .then(function(result){
+                        console.log(result)
+                        botMessage = result.data.body;
+                        insertChat("bot", botMessage);
+                    }).catch( function(result){
+                        console.log("Error: " + JSON.stringify(result));
+                    });
+            }
+        </script>
+    </body>
+</html>
