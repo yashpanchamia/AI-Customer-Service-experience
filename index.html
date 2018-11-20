@@ -1,138 +1,14 @@
-<!-- <!DOCTYPE html>
-<html>
-  <head>
-    <title>AI Customer Service API</title>
-    <link rel="stylesheet" type="text/css" href="style.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-        <link href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-        <script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
-        
-  </head>
-  <body>
-    <div class='header' style="height: 10%;background: blue;text-align: center;margin-right: 20px;margin-left: 20px;border-radius:20px;padding: 20px">
-        Welcome to AI Customer Service API
-    </div>
-    <div class="center" style="height: 100%;padding-top: 10px">
-    <div id="content" style="background:whitesmoke;padding-bottom: 10%">
-      <ul></ul>
-
-    </div>
-    
-      <div class=" macro footer" style="background:maroon;width: 50%;">
-        <div class="text text-r" style="float:left" >
-        
-          <input class="mytext" style="border-radius: 5px;align-self: left;height:70%" placeholder="Type a message"/>
-        </div>
-        <div style="float:right;padding-right: 50px">
-          <input type="submit" value="Send" style="width: 100%;align-self: right!important;border-radius: 5px;height: 70%">
-        </div>
-        </div>
-    </div>
-  
-  </body>
-  
-</html> 
-        <script type="text/javascript">
-
-            function formatAMPM(date) {
-                var hours = date.getHours();
-                var minutes = date.getMinutes();
-                var ampm = hours >= 12 ? 'PM' : 'AM';
-                hours = hours % 12;
-                hours = hours ? hours : 12; // the hour '0' should be '12'
-                minutes = minutes < 10 ? '0'+minutes : minutes;
-                var strTime = hours + ':' + minutes + ' ' + ampm;
-                return strTime;
-            }
-
-            function insertChat(who, text, time){
-                if (time === undefined){
-                    time = 0;
-                }
-                var control = "";
-                var date = formatAMPM(new Date());
-                
-                if (who == "user") {
-                    control =   '<li style="width:100%;">' +
-                                    '<div class="msj-rta macro" style="background:blue;margin-right:5%">' +
-                                        '<div class="text text-r">' +
-                                            '<p style="text-align:right;max-width:100%;overflow-wrap: break-word;padding:5px">'+text+'</p>' +
-                                            '<p style="text-align:right;padding:5px"><small>'+date+'</small></p>' +
-                                        '</div>' +
-                                '</li>';              
-                }
-                else if (who == "bot") {
-                    control =  '<li style="width:100%;">' +
-                                    '<div class="msj macro" style="background:green">' +
-                                        '<div class="text text-l">' +
-                                            '<p style"padding:5px">'+ text +'</p>' +
-                                            '<p style="text-align:left;padding:5px"><small>'+date+'</small></p>' +
-                                        '</div>' +
-                                    '</div>' +
-                                '</li>';      
-                }
-                setTimeout (
-                    function() {
-                        $("ul").append(control).scrollTop($("ul").prop('scrollHeight'));
-                    }, time);
-            }
-
-            function resetChat(){
-                $("ul").empty();
-            }
-
-            resetChat();
-            $(".mytext").on("keydown", function(e) {
-                if (e.which == 13) {
-                    const userMessage = $(this).val();
-                    if (userMessage !== "") {
-                        insertChat("user", userMessage);
-                        $(this).val("");
-                    }
-                    response(userMessage);
-                }
-            });
-
-            $('body > div > div > div:nth-child(2) > span').click(function(){
-                $(".mytext").trigger({type: 'keydown', which: 13, keyCode: 13});
-            });
-
-            
-
-            function response(userMessage) {
-                $.ajax({
-                    url : "https://g1b16za560.execute-api.us-east-1.amazonaws.com/dev/chatbot",
-                    type : "POST",
-                    headers: {"x-api-key": ""},
-                    data : JSON.stringify({
-                        "message": userMessage
-                    }),
-                    dataType : "json",
-                    contentType : "application/json",
-                    success : function(data) {
-                        botMessage = data.body;
-                        insertChat("bot", botMessage);
-                    },
-                    error : function(request, error) {
-                        console.log("Request: " + JSON.stringify(request));
-                        console.log("Error: " + JSON.stringify(error));
-                    }
-                });
-            }
-        </script>
-
-   
-</html>
- -->
-
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
     <head>
         <title>AI Customer Service</title>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-        <link rel="stylesheet" type="text/css" href="style.css">
+        <link rel="stylesheet" type="text/css" href="./css/style.css">
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+        <link rel="shortcut icon" href="./images/favicon.ico">
         <link href="https://fonts.googleapis.com/css?family=Niramit" rel="stylesheet">
+        <!-- <script src="https://sdk.amazonaws.com/js/aws-sdk-2.353.0.min.js"></script> -->
+        <script type="text/javascript" src="aws-sdk.min.js"></script>
         <script type="text/javascript" src="lib/axios/dist/axios.standalone.js"></script>
         <script type="text/javascript" src="lib/CryptoJS/rollups/hmac-sha256.js"></script>
         <script type="text/javascript" src="lib/CryptoJS/rollups/sha256.js"></script>
@@ -144,14 +20,17 @@
         <script type="text/javascript" src="lib/apiGatewayCore/simpleHttpClient.js"></script>
         <script type="text/javascript" src="lib/apiGatewayCore/utils.js"></script>
         <script type="text/javascript" src="apigClient.js"></script>
+        <!-- <script type="text/javascript" src="aws-cognito-sdk.min.js"></script> -->
+        <!-- <script type="text/javascript" src="amazon-cognito-identity.min.js"></script> -->
+        <!-- <script type="text/javascript" src="amazon-cognito-auth.min.js"></script> -->
     </head>
 
     <body>
         <div class="header" style="height:10%; text-align:center; margin-right:20px; margin-left:20px; border-radius:20px; padding:20px;">
             <h1>Welcome to the AI Customer Chatbot</h1>
         </div>
-        <div class="center" style="height:100%; background:#BDBDBD; margin-top:10px; border-radius:10px;">
-            <div id="content" style="padding-bottom:10%">
+        <div class="center" style="height:auto!important; background:#BDBDBD; margin-top:10px; border-radius:10px;">
+            <div id="content" style="padding-bottom:10%;margin-bottom: 5%">
                 <ul></ul>
             </div>
             <div class=" macro footer" style="width:50%; height:10%;">
@@ -165,6 +44,29 @@
         </div>
 
         <script type="text/javascript">
+
+            // Get tokens from URL
+            var search = decodeURIComponent(window.location.href.slice(window.location.href.indexOf('#')+1));
+            var definitions = search.split('&');
+            var params = {};
+            
+            definitions.forEach(function(val, key) {
+                var parts = val.split('=', 2);
+                params[parts[0]] = parts[1];
+            });
+
+            if ('id_token' in params && 'access_token' in params && 'expires_in' in params && 'token_type' in params) {
+                // User is authenticated
+                var id_token = params['id_token'];
+                var access_token = params['access_token'];
+                var expires_in = params['expires_in'];
+                var token_type = params['token_type'];
+            }
+            else {
+                // User is not authenticated
+                window.location.replace('https://aichatbot.auth.us-east-1.amazoncognito.com/login?response_type=token&client_id=7ok5btt7j5f08e59h87rmiht92&redirect_uri=https://s3.amazonaws.com/aicustomerserviceexperience/index.html');
+            }
+
             function formatAMPM(date) {
                 var hours = date.getHours();
                 var minutes = date.getMinutes();
@@ -175,6 +77,7 @@
                 var strTime = hours + ':' + minutes + ' ' + ampm;
                 return strTime;
             }
+
             function insertChat(who, text) {
                 var control = "";
                 var date = formatAMPM(new Date());
@@ -200,10 +103,12 @@
                 }
                 $("ul").append(control).scrollTop($("ul").prop('scrollHeight'));
             }
+            
             function resetChat() {
                 $("ul").empty();
             }
             resetChat();
+
             $(".userInput").on("keydown", function(e) {
                 if (e.which == 13) {
                     const userMessage = $(this).val();
@@ -213,14 +118,17 @@
                     }
                 }
             });
+
             $('body > div > div > div:nth-child(2) > span').click(function(){
                 $(".userInput").trigger({type: 'keydown', which: 13, keyCode: 13});
             });
+            
             document.getElementById("btnSendMessage").onclick = function () {
                 const userMessage = $('#inputUserMessage').val();
                 $('#inputUserMessage').val("");
                 response(userMessage);
             };
+
             function response(userMessage) {
                 userMessage = userMessage.trim();
                 if (userMessage == "clear") {
@@ -231,24 +139,76 @@
                     return
                 }
                 insertChat("user", userMessage);
-                var apigClient = apigClientFactory.newClient({
-                    apiKey: "my_api_key"
+
+                // // apigclient with api keys
+                // var apigClient = apigClientFactory.newClient({
+                //     apiKey: "my_api_key"
+                // });
+                // var apigClient = apigClientFactory.newClient();
+
+                // Set the region where your identity pool exists
+                AWS.config.region = 'us-east-1';
+
+                // Configure the credentials provider to use your identity pool
+                AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+                    IdentityPoolId: 'my_identity_pool_id',  // my_identity_pool_id
+                    Logins: {
+                        // Set cognito user pool id (id_token was retrieved from the URL)
+                        'my_cognito_user_pool_id': id_token  // my_cognito_user_pool_id
+                    }
                 });
-                var params = {};
-                var body = {
-                    "message": userMessage
-                };
-                var additionalParams = {
-                    headers: {}
-                };
-                apigClient.chatbotPost(params, body, additionalParams)
-                    .then(function(result){
-                        console.log(result)
-                        botMessage = result.data.body;
-                        insertChat("bot", botMessage);
-                    }).catch( function(result){
-                        console.log("Error: " + JSON.stringify(result));
+
+                // Make the call to obtain credentials
+                AWS.config.credentials.get(function() {
+
+                    // Credentials will be available when this function is called
+                    var accessKeyId = AWS.config.credentials.accessKeyId;
+                    var secretAccessKey = AWS.config.credentials.secretAccessKey;
+                    var sessionToken = AWS.config.credentials.sessionToken;
+                    var identityId = AWS.config.credentials.identityId;
+
+                    var apigClient = apigClientFactory.newClient({ 
+                        accessKey: accessKeyId,
+                        secretKey: secretAccessKey,
+                        sessionToken: sessionToken
                     });
+
+                    var params = {};
+                    var body = {
+                        "message": userMessage
+                    };
+                    var additionalParams = {
+                        headers: {}
+                    };
+
+                    apigClient.chatbotPost(params, body, additionalParams)
+                        .then(function(result) {
+                            botMessage = result.data.message;
+                            console.log('result' + JSON.stringify(result));
+                            insertChat("bot", botMessage);
+                        }).catch(function(error) {
+                            console.log("Error: " + JSON.stringify(error));
+                        });
+                });
+
+                // $.ajax({
+                //     type : "POST",
+                //     url : "https://g1b16za560.execute-api.us-east-1.amazonaws.com/dev/chatbot",
+                //     headers: {"x-api-key": "my_api_key"},
+                //     data : JSON.stringify({
+                //         "message": userMessage
+                //     }),
+                //     dataType : "json",
+                //     contentType : "application/json",
+                //     success : function(data) {
+                //         botMessage = data.body;
+                //         insertChat("bot", botMessage);
+                //     },
+                //     error : function(request, error) {
+                //         console.log("Request: " + JSON.stringify(request));
+                //         console.log("Error: " + JSON.stringify(error));
+                //     }
+                // });
             }
         </script>
     </body>
